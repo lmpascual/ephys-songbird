@@ -76,7 +76,7 @@ max_artifact_samples = 20; % Maximum allowable samples containing artifact, as l
 % respectively)
 
 max_intersyl_s = 1; % in s. of any inter-syllable intrevals within the sequence are greater than this the trial will be skipped.
-postmotor_cushion = .1; %extra time added to end of sequence in seconds
+postmotor_cushion = .4; %extra time added to end of sequence in seconds
 get_N_back_syls = 6; % tracks syllables and syllable times prior to SYLLABLE OR SEQUENCE entered
 get_N_forward_syls = 6; % same as above but following
 syl_or_seq = char(syl_or_seq);
