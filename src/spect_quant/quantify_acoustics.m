@@ -216,9 +216,6 @@ while (1)
         load(matname)
         rawsong = board_adc_data;
         Fs = frequency_parameters.amplifier_sample_rate;
-    elseif contains(filetype,'wav')
-        rawsong = audioread(cbin_fn);
-        Fs = 30000;
     else
         error('invalid filetype')
     end
@@ -251,8 +248,7 @@ while (1)
     onset_within_file = zeros(length(id));
     offset_within_file = zeros(length(id));
     syl_duration_within_file = zeros(length(id),1);
-    syl_wav_within_file = cell(length(id),1);
-    syltable = cell(2,16);
+    syl_wav_within_file = cell(length(id),1);    
 
     for x=1:length(id) %for each targeted syllable in file
 
@@ -428,30 +424,23 @@ while (1)
 %             hrminsec = strtok(cbin_fn(end-9:end),'.');
             timestamp = [yearmonthday,hrminsec,num2str(floor(1000*(on-floor(on))),'%03i')];
             t_out(ct)=str2num(timestamp); 
-        elseif contains(cbin_fn,'wav')
-            idx = strfind(cbin_fn,'_'); 
-            yearmonthday = cbin_fn(idx(1)+1:idx(2)-1); %after first "_" is the date
-            hrminsec = fn(idx(2)+1:idx(3)-1);
-            timestamp = [yearmonthday,hrminsec,num2str(floor(1000*(on-floor(on))),'%03i')];
-            t_out(ct)=str2num(timestamp); 
-            
         else
             
-            recdata=readrecf(rec_fn);
-            t_header_str=recdata.header{1};
-            space_id=find(t_header_str==' ');
-            t_str=t_header_str((space_id(end)+1):end);
-            hr=str2num(t_str(1:2));
-            minute=str2num(t_str(4:5));
-            second=str2num(t_str(7:8));
-            
-            %the exact time down to the millisecond when the syllable occurred.
-            %T_OUT format: YYYYMMDDHHmmSSSXXX Y=year, M=month, D=day, H=hour, m=minute, SSS = second (3 digits in case it was a very long file >100 seconds), XXX=milliseconds
-            timestamp = [num2str(year) num2str(month,'%02i') num2str(day,'%02i'),... %also from the .rec file
-                num2str(hr,'%02i') num2str(minute,'%02i') num2str(second + floor(on),'%03i'),... %3 digits for the second in case it is a very long file > 100 seconds
-                num2str(floor(1000*(on-floor(on))),'%03i')]; %this line finds # of milliseconds
-            timestamp = str2num(['uint64(' timestamp ')']); %convert to uint64 because it can store exact #s up to 20 digits. timestamp has 18 digits
-            t_out(ct)=timestamp; %used later to sort summary file data by time
+        recdata=readrecf(rec_fn);
+        t_header_str=recdata.header{1};
+        space_id=find(t_header_str==' ');
+        t_str=t_header_str((space_id(end)+1):end);
+        hr=str2num(t_str(1:2));
+        minute=str2num(t_str(4:5));
+        second=str2num(t_str(7:8));
+        
+        %the exact time down to the millisecond when the syllable occurred.
+        %T_OUT format: YYYYMMDDHHmmSSSXXX Y=year, M=month, D=day, H=hour, m=minute, SSS = second (3 digits in case it was a very long file >100 seconds), XXX=milliseconds
+        timestamp = [num2str(year) num2str(month,'%02i') num2str(day,'%02i'),... %also from the .rec file
+            num2str(hr,'%02i') num2str(minute,'%02i') num2str(second + floor(on),'%03i'),... %3 digits for the second in case it is a very long file > 100 seconds
+            num2str(floor(1000*(on-floor(on))),'%03i')]; %this line finds # of milliseconds
+        timestamp = str2num(['uint64(' timestamp ')']); %convert to uint64 because it can store exact #s up to 20 digits. timestamp has 18 digits
+        t_out(ct)=timestamp; %used later to sort summary file data by time
         end
         
         % TABULATE
