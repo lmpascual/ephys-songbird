@@ -407,8 +407,14 @@ while (1)
         % syllable, recording time (t_out), shift amount.
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
              
-        %Filename for current syllable
+        %Filename and index no for current syllable
         fname_arr{ct}=cbin_fn;
+        recnames{ct} = cbin_fn; 
+        file_idx(ct) = id(x);
+        syllable(ct) = syl_to_quant;
+        onsets(ct) = on; 
+        offsets(ct) = off; 
+        dur_sec(ct) = syl_duration_within_file(x); 
 
         % Compute time of recording - FROM .REC HEADER
         if contains(cbin_fn,'rhd')
@@ -692,12 +698,12 @@ t_assay = t_assay_original; %save the t_assay variable as the original t_assay n
 %"Because the Windows operating system considers two files with the same name
 %to be the same file (regardless of case), you cannot have two files with the 
 %same name in the same folder. If you save MYFILE, and myfile.mat already 
-%exists in the current folder, then MYFILE.MAT replaces myfile.mat without warning.
+% %exists in the current folder, then MYFILE.MAT replaces myfile.mat without warning.
 %If you save myfile, and MYFILE.mat already exists in the current folder, the
 %contents of myfile.mat replace the contents of MYFILE.mat, but the name remains MYFILE.mat."
 eval(sprintf(['save(''%s'',''P1_save_allfreqs'',''F1_save_allfreqs'',''P1_save'',''F1_save'',',...
     '''peak_pinterp'',''weighted_avg'',''amp_at_pitchquant'',''spect_entropy'',''wiener_entropy'',',...
-    '''fname_arr'',''t_out'',''save_T1'','...
+    '''recnames'',''t_out'',''save_T1'',''file_idx'',''onsets'',''offsets'',''dur_sec'','...
     '''spect_params'',''f_cutoff'',''f_cutoff_full'',''t_assay'',''t_assay_amp'',''birdname'',''syl_sum'')'],summary_fn));
 
 end %end of function headphones_quantify_pitch
